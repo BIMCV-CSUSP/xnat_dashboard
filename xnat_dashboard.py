@@ -7,7 +7,12 @@ from dash.dependencies import Input, Output
 
 root_dir = Path(__file__).parent
 # Initialize the Dash app
-app = Dash(__name__)
+app = Dash(
+    __name__,
+    requests_pathname_prefix="/dashboard/",
+    routes_pathname_prefix="/dashboard/"
+
+)
 
 # Projects data
 projects_df = pd.read_csv(root_dir / "src" / "projects.csv")
@@ -55,8 +60,8 @@ subject_project_graph.update_traces(marker_color="#cf3a36")
 
 overall_description = (
     f"**Projects:** {len(projects_df)} - "
-    f"**Subjects:** {projects_df["subject_count"].sum():,} - "
-    f"**Subjects:** {projects_df["session_count"].sum():,}"
+    f"**Subjects:** {projects_df['subject_count'].sum():,} - "
+    f"**Subjects:** {projects_df['session_count'].sum():,}"
 )
 
 dropdown_options = [
@@ -157,7 +162,7 @@ def project_description(selected_project):
     description = (
         f"**Project ID:** {selected_project}\n\n"
         f"**Name:** {row.name[0]}\n\n"
-        f"**Description:** {row.description[0] if isinstance(row.description[0], str) else "No description available"}\n\n"
+        f"**Description:** {row.description[0] if isinstance(row.description[0], str) else 'No description available'}\n\n"
         f"**Session Count:** {row.session_count[0]:,}\n\n"
         f"**Subject Count:** {row.subject_count[0]:,}\n\n"
     )
@@ -174,7 +179,7 @@ app.layout = html.Div(
     children=[
         html.Div(
             children=[
-                html.H1(children="BIMCV-XNAT Dashboard", style={"fontSize": "32px", "fontWeight": "bold"}),
+                #html.H1(children="BIMCV-XNAT Dashboard", style={"fontSize": "32px", "fontWeight": "bold"}),
                 html.H2(children="Overview", style={"fontSize": "26px", "fontWeight": "bold"}),
                 dcc.Markdown(
                     id="overall-description", 
@@ -259,7 +264,7 @@ app.layout = html.Div(
         ),
     ],
     style={
-        "width": "50%",
+        "width": "100%",
         "padding": "20px",
         "font-family": "Arial", 
         "font-size": "14px", 
@@ -270,4 +275,4 @@ app.layout = html.Div(
 
 # Run the app
 if __name__ == "__main__":
-    app.run_server(debug=True)
+    app.run_server(debug=False, host="0.0.0.0", port="12222")
